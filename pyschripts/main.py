@@ -10,6 +10,11 @@ import json
 import time
 import pandas as pd
 
+
+#配置
+city = 'xian'
+date = '2023-11-23'
+
 def read_download_data():
 
     type = platform.system()
@@ -18,7 +23,7 @@ def read_download_data():
     print(path)
     # path = os.curdir+"/data/"
     # print(path)
-    cur_img_path = ".\\data" if type == "Windows" else "./data/"
+    cur_img_path = f".\\data\\{city}" if type == "Windows" else f"./data/{city}/"
     for root,folders,files in os.walk(path):
         for file in files:
             # print(file)
@@ -39,8 +44,8 @@ def read_download_data():
 
 def writeToExcel():
 
-    datadir = './data'
-    target_excel = './data/lianjia.xlsx'
+    datadir = f'./data/{city}'
+    target_excel = f'./data/{city}/lianjia.xlsx'
 
 
     files = os.listdir(datadir)
@@ -67,11 +72,11 @@ def writeToExcel():
                 print(filename, '----------', e)
 
     if not os.path.exists(target_excel):
-        df.to_excel(target_excel, index=False, sheet_name='2023-11-20')
+        df.to_excel(target_excel, index=False, sheet_name=date)
     else:
         # 追加到现有的 Excel 文件
         with pd.ExcelWriter(target_excel, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
-            df.to_excel(writer, index=False, sheet_name='2023-11-20', header=False)
+            df.to_excel(writer, index=False, sheet_name=date, header=False)
 
 if __name__ == '__main__':
     # read_download_data()
