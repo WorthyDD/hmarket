@@ -11,7 +11,7 @@ import pandas as pd
 #配置
 # city = 'chengdu'
 city = 'xian'
-date = '20240125'
+date = '20240220'
 
 def read_download_data():
 
@@ -85,11 +85,11 @@ def writeToExcel():
         with pd.ExcelWriter(target_excel, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
             df.to_excel(writer, index=False, sheet_name=date, header=True)
 
-def mergeExcel():
+def mergeExcel(before, after, result_sheet):
     # datadir = f'./data/{city}/{date}'
     target_excel = f'./data/{city}/{date}/lianjia.xlsx'
-    sheet_name1 = '20231222'
-    sheet_name2 = '20240125'
+    sheet_name1 = before
+    sheet_name2 = after
     df1 = pd.read_excel( target_excel, sheet_name=sheet_name1)
     df2 = pd.read_excel(target_excel, sheet_name=sheet_name2)
     df2 = df2.drop(columns=['title', 'desc', 'follow'])
@@ -114,8 +114,35 @@ def mergeExcel():
     
 
     print(merged_df.columns.tolist())
+
+
+    # 统计数据
+    total_rows = len(merged_df)
+    price_above_1 = merged_df[merged_df['price_diff'] >= 1]
+    count_price_above_1 = len(price_above_1)
+    max_price_above_1 = price_above_1['price_diff'].max()
+    min_price_above_1 = price_above_1['price_diff'].min()
+    mean_price_above_1 = price_above_1['price_diff'].mean()
+
+    # 3. df price <= -1 有多少条数据？<=-1 的数据中最大值和最小值分别是多少？<=-1的平均值是多少？
+    price_below_minus_1 = merged_df[merged_df['price_diff'] <= -1]
+    count_price_below_minus_1 = len(price_below_minus_1)
+    max_price_below_minus_1 = price_below_minus_1['price_diff'].max()
+    min_price_below_minus_1 = price_below_minus_1['price_diff'].min()
+    mean_price_below_minus_1 = price_below_minus_1['price_diff'].mean()
+
+    # 4. 计算 df price 平均值
+    average_price = merged_df['price_diff'].mean()
+
+    # 5. 计算 df ratio 平均值
+    average_ratio = merged_df['percent'].mean()
+
+    content = f'{before}至{after}：总共{total_rows}个房源，{count_price_above_1}个降价，降价幅度在{round(min_price_above_1,1)}万到{round(max_price_above_1,1)}万不等，平均降幅{round(mean_price_above_1,1)}万， {count_price_below_minus_1}个房源上涨，涨价幅度在{-round(min_price_below_minus_1,1)}万到{-round(max_price_below_minus_1,1)}万不等，平均涨幅{-round(mean_price_below_minus_1,1)}万。全部房源平均降价{round(average_price,1)}万，降幅{round(average_ratio*100,2)}%。'
+    print(content)
+
+
     with pd.ExcelWriter(target_excel, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
-            merged_df.to_excel(writer, index=False, sheet_name='202401merged', header=True)
+            merged_df.to_excel(writer, index=False, sheet_name=result_sheet, header=True)
 
 
 
@@ -124,6 +151,7 @@ def mergeExcel():
 if __name__ == '__main__':
     # read_download_data()
 
-    writeToExcel()
+    # writeToExcel()
 
-    mergeExcel()
+    # mergeExcel('2024年01月25日', '2024年02月20日', '24年2月')
+    mergeExcel('2023年12月22日', '2024年02月20日', '24年2月')
