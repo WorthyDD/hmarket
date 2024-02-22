@@ -1,6 +1,6 @@
 # 爬虫运行方式
 - 下载代码
-- 如果新增其他城市，需修改 manifest.json 的 matches,添加白名单
+- 如果新增其他城市，需修改 manifest.json 的 matches,添加相应城市网址的白名单
   ```
             "matches": [
                 "https://cd.lianjia.com/ershoufang/*",
