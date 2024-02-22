@@ -1,4 +1,12 @@
 # 爬虫运行方式
+- 下载代码
+- 如果新增其他城市，需修改 manifest.json 的 matches,添加白名单
+  ```
+            "matches": [
+                "https://cd.lianjia.com/ershoufang/*",
+                "https://xa.lianjia.com/ershoufang/*"
+            ],
+  ```
 - 打开chrome 浏览器，扩展程序-管理扩展程序-打开开发者模式(右上角)-加载已解压扩展程序目录-选择程序根目录；
 - 扩展插件已加载，打开插件开关；
 - 访问链家如： https://xa.lianjia.com/ershoufang/rs/， 选择好城市，筛选条件；
