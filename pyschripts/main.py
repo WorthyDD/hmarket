@@ -11,7 +11,7 @@ import pandas as pd
 #配置
 # city = 'chengdu'
 city = 'xian'
-date = '20240220'
+date = '2024年05月10日'
 
 def read_download_data():
 
@@ -105,13 +105,19 @@ def mergeExcel(before, after, result_sheet):
     df2['price2'] = pd.to_numeric(df2['price2'], errors='coerce')
 
 
+
     print(df1.columns.tolist(), df2.columns.tolist())
     merged_df = pd.merge(df1, df2, on='link',how='inner')
     print(merged_df)
     merged_df['price_diff'] = merged_df['price1'] - merged_df['price2']
     merged_df['percent'] = (merged_df['price_diff'] / merged_df['price1'])
+    merged_df['area'] = merged_df['desc'].str.extract(r'([0-9.]+)平米')
+    merged_df['area'] = pd.to_numeric(merged_df['area'], errors='coerce')
+    merged_df['avg_price1'] = merged_df['price1'] / merged_df['area']
+    merged_df['avg_price2'] = merged_df['price2'] / merged_df['area']
 
-    
+
+
 
     print(merged_df.columns.tolist())
 
@@ -123,6 +129,8 @@ def mergeExcel(before, after, result_sheet):
     max_price_above_1 = price_above_1['price_diff'].max()
     min_price_above_1 = price_above_1['price_diff'].min()
     mean_price_above_1 = price_above_1['price_diff'].mean()
+    mean_price_before = merged_df['avg_price1'].mean()
+    mean_price_after = merged_df['avg_price2'].mean()
 
     # 3. df price <= -1 有多少条数据？<=-1 的数据中最大值和最小值分别是多少？<=-1的平均值是多少？
     price_below_minus_1 = merged_df[merged_df['price_diff'] <= -1]
@@ -137,7 +145,7 @@ def mergeExcel(before, after, result_sheet):
     # 5. 计算 df ratio 平均值
     average_ratio = merged_df['percent'].mean()
 
-    content = f'{before}至{after}：总共{total_rows}个房源，{count_price_above_1}个降价，降价幅度在{round(min_price_above_1,1)}万到{round(max_price_above_1,1)}万不等，平均降幅{round(mean_price_above_1,1)}万， {count_price_below_minus_1}个房源上涨，涨价幅度在{-round(min_price_below_minus_1,1)}万到{-round(max_price_below_minus_1,1)}万不等，平均涨幅{-round(mean_price_below_minus_1,1)}万。全部房源平均降价{round(average_price,1)}万，降幅{round(average_ratio*100,2)}%。'
+    content = f'{before}至{after}：总共{total_rows}个房源，上月均价: {round(mean_price_before, 2)}万, 当月均价:{round(mean_price_after, 2)}万, {count_price_above_1}个降价，降价幅度在{round(min_price_above_1,1)}万到{round(max_price_above_1,1)}万不等，平均降幅{round(mean_price_above_1,1)}万， {count_price_below_minus_1}个房源上涨，涨价幅度在{-round(min_price_below_minus_1,1)}万到{-round(max_price_below_minus_1,1)}万不等，平均涨幅{-round(mean_price_below_minus_1,1)}万。全部房源平均降价{round(average_price,1)}万，降幅{round(average_ratio*100,2)}%。'
     print(content)
 
 
@@ -151,7 +159,7 @@ def mergeExcel(before, after, result_sheet):
 if __name__ == '__main__':
     # read_download_data()
 
-    # writeToExcel()
+    writeToExcel()
 
-    # mergeExcel('2024年01月25日', '2024年02月20日', '24年2月')
-    mergeExcel('2023年11月23日', '2024年02月20日', '24年2月')
+    # mergeExcel('2024年03月25日', '2024年02月20日', '24年2月')
+    mergeExcel('2024年03月25日', date, '24年4月')
