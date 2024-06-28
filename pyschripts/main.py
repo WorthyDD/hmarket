@@ -9,8 +9,8 @@ import pandas as pd
 
 
 #配置
-# city = 'chengdu'
-city = 'xian'
+city = 'chengdu'
+# city = 'xian'
 date = '2024年05月10日'
 
 def read_download_data():
@@ -148,9 +148,9 @@ def mergeExcel(before, after, result_sheet):
     content = f'{before}至{after}：总共{total_rows}个房源，上月均价: {round(mean_price_before, 2)}万, 当月均价:{round(mean_price_after, 2)}万, {count_price_above_1}个降价，降价幅度在{round(min_price_above_1,1)}万到{round(max_price_above_1,1)}万不等，平均降幅{round(mean_price_above_1,1)}万， {count_price_below_minus_1}个房源上涨，涨价幅度在{-round(min_price_below_minus_1,1)}万到{-round(max_price_below_minus_1,1)}万不等，平均涨幅{-round(mean_price_below_minus_1,1)}万。全部房源平均降价{round(average_price,1)}万，降幅{round(average_ratio*100,2)}%。'
     print(content)
 
-
-    with pd.ExcelWriter(target_excel, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
-            merged_df.to_excel(writer, index=False, sheet_name=result_sheet, header=True)
+    #
+    # with pd.ExcelWriter(target_excel, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
+    #         merged_df.to_excel(writer, index=False, sheet_name=result_sheet, header=True)
 
 
 
@@ -159,7 +159,7 @@ def mergeExcel(before, after, result_sheet):
 if __name__ == '__main__':
     # read_download_data()
 
-    writeToExcel()
+    # writeToExcel()
 
     # mergeExcel('2024年03月25日', '2024年02月20日', '24年2月')
-    mergeExcel('2024年03月25日', date, '24年4月')
+    mergeExcel('2023年11月20日', date, '24年4月')
